@@ -1,3 +1,6 @@
 # Jetbrains
 *.iml
 .idea
+
+# Bower
+bower_components
