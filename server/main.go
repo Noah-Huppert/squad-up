@@ -8,16 +8,20 @@ import (
 	"net/http"
 )
 
+// serveIndex responds with index.html view
+func serveIndex (w http.ResponseWriter, r *http.Request) {
+	// File path (3rd arg) is relative to Go cli wkr dir (go/src/squad-up)
+	http.ServeFile(w, r, "client/views/index.html")
+}
+
 // Main entry point of program.
 func main() {
 	// New HTTP router.
 	mux := http.NewServeMux()
 
-	// Serves index.html at root.
-	mux.HandleFunc("/", func (w http.ResponseWriter, r*http.Request) {
-		// File path (3rd arg) is relative to Go cli wkr dir (go/src/squad-up)
-		http.ServeFile(w, r, "client/views/index.html")
-	})
+	// Mux handlers
+	mux.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("bower_components"))))
+	mux.HandleFunc("/", serveIndex)
 
 	// Start listening on any host, port 5000.
 	err := http.ListenAndServe(":5000", mux)
