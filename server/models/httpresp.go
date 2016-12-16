@@ -13,7 +13,7 @@ type HTTPResponse struct {
 }
 
 func (r HTTPResponse) Serve(w http.ResponseWriter) {
-	// Encode response in jsson
+	// Encode response in json
 	bytes, err := json.Marshal(r)
 	if err != nil {
 		// Handle encoding error
