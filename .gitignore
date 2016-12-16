@@ -4,3 +4,7 @@
 
 # Bower
 bower_components
+
+# Golang
+vendor
+

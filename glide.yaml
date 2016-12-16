@@ -1,0 +1,6 @@
+package: github.com/Noah-Huppert/squad-up
+import: []
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert
