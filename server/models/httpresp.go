@@ -12,9 +12,9 @@ type HTTPResponse struct {
 	Error  APIError   `json:"error"`
 }
 
-func (this HTTPResponse) Serve(w http.ResponseWriter) {
+func (r HTTPResponse) Serve(w http.ResponseWriter) {
 	// Encode response in jsson
-	bytes, err := json.Marshal(this)
+	bytes, err := json.Marshal(r)
 	if err != nil {
 		// Handle encoding error
 		fmt.Println("Error marshalling json: ", err)
@@ -25,10 +25,10 @@ func (this HTTPResponse) Serve(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	// Set status
-	if this.Error == nil {
+	if r.Error == nil {
 		w.WriteHeader(http.StatusOK)
 	} else {
-		w.WriteHeader(this.Error.HTTPCode)
+		w.WriteHeader(r.Error.HTTPCode)
 	}
 
 	// Write body
