@@ -3,50 +3,14 @@ package main
 
 // Import deps.
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"encoding/json"
-	"errors"
 )
-
-type ResultEnum int
-const (
-	SUCCESS ResultEnum = iota
-	FAIL
-)
-
-func (this ResultEnum) MarshalJSON() ([]byte, error) {
-	switch this {
-	case SUCCESS:
-		return []byte("success"), nil
-	case FAIL:
-		return []byte("fail"), nil
-	}
-
-	return nil, errors.New("Uknown value of ResultEnum: " + this)
-}
-
-func (this ResultEnum) UnmarshalJSON(data []byte) error {
-	switch data {
-	case []byte("success"):
-		this = SUCCESS
-		return nil
-	case []byte("fail"):
-		this = FAIL
-		return nil
-	}
-
-	return errors.New("Uknown value for ResultEnum: " + data)
-}
-
-type HTTPResponse struct {
-	Status ResultEnum `json:"status"`
-	Errors []error `json:"errors"`
-}
 
 // serveIndex responds with index.html view
-func serveIndex (w http.ResponseWriter, r *http.Request) {
+func serveIndex(w http.ResponseWriter, r *http.Request) {
 	// File path (3rd arg) is relative to Go cli wkr dir (go/src/squad-up)
 	http.ServeFile(w, r, "client/views/index.html")
 }
@@ -63,7 +27,7 @@ func main() {
 	mux.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("bower_components"))))
 	mux.HandleFunc("/", serveIndex)
 
-	mux.HandleFunc("/api/v1/auth/google/token", func (w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v1/auth/google/token", func(w http.ResponseWriter, r *http.Request) {
 		// Get id_token passed in request
 		idToken := r.PostFormValue("id_token")
 		if len(idToken) == 0 {
@@ -137,7 +101,7 @@ func main() {
 			return
 		}
 
-		fmt.Fprintf(w, )
+		// TODO: Send normal response
 	})
 
 	// Start listening on any host, port 5000.
