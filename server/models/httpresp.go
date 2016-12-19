@@ -38,8 +38,7 @@ func (r HTTPResponse) Serve(w http.ResponseWriter) error {
 	bytes, err := json.Marshal(r)
 	if err != nil {
 		// Handle encoding error
-		fmt.Println("Error marshalling json: ", err)
-		return
+		return errors.New("Error marshalling json: " + err)
 	}
 
 	// Set headers

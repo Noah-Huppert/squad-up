@@ -6,16 +6,31 @@ import (
 	"net/http"
 	"github.com/stretchr/testify/assert"
 	"errors"
+	"encoding/json"
 )
 
 // Mock http header with kv
 type MockHeader map[string][]string
 
+// Mock function used in Serve method
+func (h MockHeader) Set(key, value string) {
+	h.Set(key, value)
+}
+
+
+
 // Mock http.ResponseWriter for testing
 type MockResponseWriter struct {
 	mock.Mock
 
+	Body string
 	RespHeader MockHeader
+}
+
+// Mock write function to make struct a Writer
+func (m *MockResponseWriter) Write(p []byte) (n int, err error) {
+	m.Body = append(m.Body, p...)
+	return len(p), nil
 }
 
 // Getter for header field, used in HTTPResponse.Serve
@@ -89,8 +104,27 @@ func TestHTTPResponse_Serve(t *testing.T) {
 		err := resp.Serve(writer)
 
 		// Assert
-		assert.Equal(t, item.err, err, "[Status: " + item.Status + ", Error: " + item.Error + "] Expected: " +
+		assert := assert.New(t)
+
+		// Check err
+		assert.Equal(item.err, err, "[Status: " + item.Status + ", Error: " + item.Error + "] Expected: " +
 			item.err + ", Got: " + err)
+
+		// Check code
 		writer.AssertExpectations(t)
+
+		// Check writer.RespHeader for correct Content Type value
+		assert.Equal(writer.RespHeader["Content-Type"], "application/json; charset=utf-8")
+
+		// Check body was marshalled properly, don't check body if this case expects an error (As it would never
+		// sent so the body doesn't matter)
+		if item.err == nil {
+			bytes, err := json.Marshal(resp)
+			if err != nil {
+				// Handle encoding error
+				t.Error("[Status: " + item.Status + ", Error: " + item.Error + "] Error marshalling json: " + err)
+			}
+			assert.Equal(string(bytes[:]), writer.Body, "writer.Body should be equal to marshalled resp object")
+		}
 	}
 }
