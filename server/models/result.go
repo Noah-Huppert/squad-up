@@ -10,11 +10,8 @@ const (
 )
 
 func (r ResultEnum) MarshalJSON() ([]byte, error) {
-	switch r {
-	case SUCCESS:
-		return []byte("success"), nil
-	case FAIL:
-		return []byte("fail"), nil
+	if r == SUCCESS || r == FAIL {
+		return []byte(r.String()), nil
 	}
 
 	return nil, errors.New("Uknown value of ResultEnum: " + r)
@@ -31,4 +28,15 @@ func (r ResultEnum) UnmarshalJSON(data []byte) error {
 	}
 
 	return errors.New("Uknown value for ResultEnum: " + data)
+}
+
+func (r ResultEnum) String() string {
+	switch r {
+	case SUCCESS:
+		return "success"
+	case FAIL:
+		return "fail"
+	default:
+		return "!INVALID VALUE (value: " + r + ")!"
+	}
 }
