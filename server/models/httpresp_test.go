@@ -2,37 +2,35 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"testing"
 )
 
-// Mock http header with kv
-type MockHeader map[string][]string
-
+/*
 // Mock function used in Serve method
 func (h MockHeader) Set(key, value string) {
 	h.Set(key, value)
 }
+*/
 
 // Mock http.ResponseWriter for testing
 type MockResponseWriter struct {
 	mock.Mock
 
 	Body       string
-	RespHeader MockHeader
+	RespHeader http.Header
 }
 
 // Mock write function to make struct a Writer
 func (m *MockResponseWriter) Write(p []byte) (n int, err error) {
-	m.Body = append(m.Body, p...)
+	m.Body += string(p[:])
 	return len(p), nil
 }
 
 // Getter for header field, used in HTTPResponse.Serve
-func (m *MockResponseWriter) Header() MockHeader {
+func (m *MockResponseWriter) Header() http.Header {
 	return m.RespHeader
 }
 
@@ -41,34 +39,11 @@ func (m *MockResponseWriter) WriteHeader(code int) {
 	m.Called(code)
 }
 
-/*
-HTTPResponse.Serve test matrix:
-	Pseudo objects:
-		r {
-			Status: Either "SUCCESS" or "FAIL"
-			Error: Either "nil" (unset) or "testerr" which is the models.APIError struct:
-				models.APIError { Id: "testerr", Message: "msg", HTTPCode: 500 }
-		}
-		code: HTTP status code that Serve() method tried to respond with (nil if method never responds)
-		err: Error returned by Serve() method
-
-	Matrix:
-	- r.Status: SUCCESS
-		- r.Error: nil ~> assert(code == 200), assert(err == nil)
-		- r.Error: testerr ~> assert(code == nil), assert(err == errors.New("If response \"Status\" is \"SUCCESS\" then an \"Error\" can not be provided"))
-	- r.Status: FAIL
-		- r.Error: nil ~> assert(code == nil), assert(err == errors.New("If response \"Status\" is \"FAIL\" then an \"Error\" must be provided")
-		- r.Error: testerr ~> assert(code == 500), assert(err == nil)
-	- r.Status: -1 (Intentionally wrong value to create JSON marshal error)
-		- R.Error: nil ~> assert(code == nil), assert(err == errors.New(...))
-*/
 func TestHTTPResponse_Serve(t *testing.T) {
 	// Real version of Pseudo object "r"
 	type MatrixItem struct {
-		// ResultEnum value to construct test HTTPResponse with
-		Status ResultEnum
 		// APIError value to construct test HTTPResponse with
-		Error APIError
+		Error *APIError
 		// HTTP status code to expect MockResponseWriter.WriteHeader to be called with
 		// Set to -1 if MockResponseWriter.WriteHeader isn't expected to be called
 		code int
@@ -81,20 +56,18 @@ func TestHTTPResponse_Serve(t *testing.T) {
 
 	// Make test matrix
 	matrix := []MatrixItem{
-		MatrixItem{SUCCESS, nil, http.StatusOK, nil},
-		MatrixItem{SUCCESS, testErr, testErr.HTTPCode, errors.New("If response \"Status\" is \"SUCCESS\" then an \"Error\" can not be provided")},
-		MatrixItem{FAIL, nil, -1, errors.New("If response \"Status\" is \"FAIL\" then an \"Error\" must be provided")},
-		MatrixItem{FAIL, testErr, testErr.HTTPCode, nil},
-		MatrixItem{-1, nil, -1, nil}, // TODO: Fill in correct json marshall error for wrong Result value
+		MatrixItem{nil, http.StatusOK, nil},
+		MatrixItem{&testErr, testErr.HTTPCode, nil},
 	}
 
 	// Test each case
 	for _, item := range matrix {
 		// Make resp
-		resp := HTTPResponse{item.Status, item.Error}
+		resp := HTTPResponse{item.Error}
 
 		// Setup expect for HTTP status code
 		writer := new(MockResponseWriter)
+		writer.RespHeader = make(map[string][]string)
 
 		// If code wasn't set to -1 (Which is considered the nil value of the field)
 		if item.code != -1 {
@@ -105,17 +78,18 @@ func TestHTTPResponse_Serve(t *testing.T) {
 		err := resp.Serve(writer)
 
 		// Assert
-		assert := assert.New(t)
+		a := assert.New(t)
 
 		// Check err
-		assert.Equal(item.err, err, "[Status: "+item.Status+", Error: "+item.Error+"] Expected: "+
-			item.err+", Got: "+err)
+		if item.err != nil {
+			a.Equal(item.err, err, "Expected: " + item.err.Error() + ", Got: " + err.Error())
+		}
 
 		// Check code
 		writer.AssertExpectations(t)
 
 		// Check writer.RespHeader for correct Content Type value
-		assert.Equal(writer.RespHeader["Content-Type"], "application/json; charset=utf-8")
+		a.Equal([]string{"application/json; charset=utf-8"}, writer.RespHeader["Content-Type"])
 
 		// Check body was marshalled properly, don't check body if this case expects an error (As it would never
 		// sent so the body doesn't matter)
@@ -123,9 +97,9 @@ func TestHTTPResponse_Serve(t *testing.T) {
 			bytes, err := json.Marshal(resp)
 			if err != nil {
 				// Handle encoding error
-				t.Error("[Status: " + item.Status + ", Error: " + item.Error + "] Error marshalling json: " + err)
+				t.Error("Error marshalling json: " + err.Error())
 			}
-			assert.Equal(string(bytes[:]), writer.Body, "writer.Body should be equal to marshalled resp object")
+			a.Equal(string(bytes[:]), writer.Body, "writer.Body should be equal to marshalled resp object")
 		}
 	}
 }
