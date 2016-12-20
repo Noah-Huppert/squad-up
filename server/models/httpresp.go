@@ -44,8 +44,6 @@ func (r *HTTPResponse) Serve(w http.ResponseWriter) error {
 	// Set headers
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-	// Set body
-	io.WriteString(w, string(bytes[:]))
 
 	// Send response with custom status code
 	if r.Error == nil {
@@ -56,10 +54,13 @@ func (r *HTTPResponse) Serve(w http.ResponseWriter) error {
 		w.WriteHeader(r.Error.HTTPCode)
 	}
 
+	// Set body
+	io.WriteString(w, string(bytes[:]))
+
 	return nil
 }
 
 func (r *HTTPResponse) WithError(id, message string, code int) *HTTPResponse {
-	r.Error = APIError{id, message, code}
+	r.Error = &APIError{id, message, code}
 	return r
 }
