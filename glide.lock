@@ -1,6 +1,17 @@
-hash: 745fc80e6b2583a8834ddf1b14e2204c4c675723d590108a3385785fe8e2a3c9
-updated: 2016-12-15T20:16:08.73773153-05:00
-imports: []
+hash: 29f53353b5947764f6fd7be09fba9d4305fb3c70f635267ff2e41b2d095c1b6a
+updated: 2016-12-20T17:58:09.928626722-05:00
+imports:
+- name: github.com/jinzhu/gorm
+  version: 5174cc5c242a728b435ea2be8a2f7f998e15429b
+  subpackages:
+  - dialects/postgres
+- name: github.com/jinzhu/inflection
+  version: 74387dc39a75e970e7a3ae6a3386b5bd2e5c5cff
+- name: github.com/lib/pq
+  version: 5bf161122cd640c2a5a2c1d7fa49ea9befff31dd
+  subpackages:
+  - hstore
+  - oid
 testImports:
 - name: github.com/davecgh/go-spew
   version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9
@@ -10,7 +21,10 @@ testImports:
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
   - difflib
+- name: github.com/stretchr/objx
+  version: cbeaeb16a013161a98496fad62933b1d21786672
 - name: github.com/stretchr/testify
   version: 18a02ba4a312f95da08ff4cfc0055750ce50ae9e
   subpackages:
   - assert
+  - mock

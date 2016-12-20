@@ -6,20 +6,33 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jinzhu/gorm"
+    _ "github.com/jinzhu/gorm/dialects/postgres"
+
 	"github.com/Noah-Huppert/squad-up/server/handlers"
 )
 
 // Main entry point of program.
 func main() {
+    db, err := gorm.Open("postgres", "host=localhost user=username password=password dbname=squad-up sslmode=disable")
+    defer db.Close()
+
+    if err != nil {
+        fmt.Println("Error connecting to database: " + err.Error())
+    } else {
+        fmt.Println("Connected to database on :5432")
+    }
+
 	// New HTTP router.
 	mux := http.NewServeMux()
 
+	// Attach handlers
 	handlers.LoadAll(mux)
-
 
 	// Start listening on any host, port 5000.
 	fmt.Println("Listening on :5000")
-	err := http.ListenAndServe(":5000", mux)
+
+	err = http.ListenAndServe(":5000", mux)
 	if err != nil { // If err print to console.
 		fmt.Println("Error starting HTTP server on :5000: " + err.Error())
 	}

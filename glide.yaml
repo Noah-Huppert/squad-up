@@ -1,5 +1,8 @@
 package: github.com/Noah-Huppert/squad-up
-import: []
+import:
+- package: github.com/jinzhu/gorm
+  version: v1.0
+- package: github.com/lib/pq
 testImport:
 - package: github.com/stretchr/testify
   subpackages:

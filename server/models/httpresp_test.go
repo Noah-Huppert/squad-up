@@ -8,13 +8,6 @@ import (
 	"testing"
 )
 
-/*
-// Mock function used in Serve method
-func (h MockHeader) Set(key, value string) {
-	h.Set(key, value)
-}
-*/
-
 // Mock http.ResponseWriter for testing
 type MockResponseWriter struct {
 	mock.Mock
