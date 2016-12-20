@@ -11,7 +11,7 @@ const (
 
 func (r ResultEnum) MarshalJSON() ([]byte, error) {
 	if r == SUCCESS || r == FAIL {
-		return []byte(r.String()), nil
+		return []byte("\"" + r.String() + "\""), nil
 	}
 
 	return nil, errors.New("Uknown value of ResultEnum: " + r.String())
