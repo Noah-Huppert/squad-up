@@ -2,28 +2,28 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
-	"errors"
 )
 
 type HTTPResponse struct {
 	Status ResultEnum `json:"status"`
-	Error  APIError   `json:"error"`
+	Error  *APIError  `json:"error"`
 }
 
-func (r HTTPResponse) Serve(w http.ResponseWriter) error {
+// Serve HTTPResponse struct as JSON with appropriate HTTP status code.
+func (r *HTTPResponse) Serve(w http.ResponseWriter) error {
 	/*
-	Sanity check:
-		If Status == SUCCESS then Error == nil
-		If Status == FAIL then Error != nil
+		Sanity check:
+			If Status == SUCCESS then Error == nil
+			If Status == FAIL then Error != nil
 
-	Allows us to make assumptions when setting the response status coded
+		Allows us to make assumptions when setting the response status coded
 
-	Also avoids useless API responses where Status is fail but no error is given or
-	confusing API responses where Status is success but an error is given
-	 */
+		Also avoids useless API responses where Status is fail but no error is given or
+		confusing API responses where Status is success but an error is given
+	*/
 	// Error if Status == SUCCESS but Error isn't nil
 	if r.Status == SUCCESS && r.Error != nil {
 		return errors.New("If response \"Status\" is \"SUCCESS\" then an \"Error\" can not be provided")
@@ -38,14 +38,14 @@ func (r HTTPResponse) Serve(w http.ResponseWriter) error {
 	bytes, err := json.Marshal(r)
 	if err != nil {
 		// Handle encoding error
-		return errors.New("Error marshalling json: " + err)
+		return errors.New("Error marshalling json: " + err.Error())
 	}
 
 	// Set headers
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	// Set body
-	io.WriteString(w, bytes)
+	io.WriteString(w, string(bytes[:]))
 
 	// Send response with custom status code
 	if r.Error == nil {
@@ -57,4 +57,9 @@ func (r HTTPResponse) Serve(w http.ResponseWriter) error {
 	}
 
 	return nil
+}
+
+func (r *HTTPResponse) WithError(id, message string, code int) *HTTPResponse {
+	r.Error = APIError{id, message, code}
+	return r
 }

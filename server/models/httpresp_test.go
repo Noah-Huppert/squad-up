@@ -1,12 +1,12 @@
 package models
 
 import (
-	"testing"
+	"encoding/json"
+	"errors"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
-	"github.com/stretchr/testify/assert"
-	"errors"
-	"encoding/json"
+	"testing"
 )
 
 // Mock http header with kv
@@ -17,13 +17,11 @@ func (h MockHeader) Set(key, value string) {
 	h.Set(key, value)
 }
 
-
-
 // Mock http.ResponseWriter for testing
 type MockResponseWriter struct {
 	mock.Mock
 
-	Body string
+	Body       string
 	RespHeader MockHeader
 }
 
@@ -61,7 +59,9 @@ HTTPResponse.Serve test matrix:
 	- r.Status: FAIL
 		- r.Error: nil ~> assert(code == nil), assert(err == errors.New("If response \"Status\" is \"FAIL\" then an \"Error\" must be provided")
 		- r.Error: testerr ~> assert(code == 500), assert(err == nil)
- */
+	- r.Status: -1 (Intentionally wrong value to create JSON marshal error)
+		- R.Error: nil ~> assert(code == nil), assert(err == errors.New(...))
+*/
 func TestHTTPResponse_Serve(t *testing.T) {
 	// Real version of Pseudo object "r"
 	type MatrixItem struct {
@@ -85,6 +85,7 @@ func TestHTTPResponse_Serve(t *testing.T) {
 		MatrixItem{SUCCESS, testErr, testErr.HTTPCode, errors.New("If response \"Status\" is \"SUCCESS\" then an \"Error\" can not be provided")},
 		MatrixItem{FAIL, nil, -1, errors.New("If response \"Status\" is \"FAIL\" then an \"Error\" must be provided")},
 		MatrixItem{FAIL, testErr, testErr.HTTPCode, nil},
+		MatrixItem{-1, nil, -1, nil}, // TODO: Fill in correct json marshall error for wrong Result value
 	}
 
 	// Test each case
@@ -107,8 +108,8 @@ func TestHTTPResponse_Serve(t *testing.T) {
 		assert := assert.New(t)
 
 		// Check err
-		assert.Equal(item.err, err, "[Status: " + item.Status + ", Error: " + item.Error + "] Expected: " +
-			item.err + ", Got: " + err)
+		assert.Equal(item.err, err, "[Status: "+item.Status+", Error: "+item.Error+"] Expected: "+
+			item.err+", Got: "+err)
 
 		// Check code
 		writer.AssertExpectations(t)

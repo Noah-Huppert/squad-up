@@ -14,20 +14,21 @@ func (r ResultEnum) MarshalJSON() ([]byte, error) {
 		return []byte(r.String()), nil
 	}
 
-	return nil, errors.New("Uknown value of ResultEnum: " + r)
+	return nil, errors.New("Uknown value of ResultEnum: " + r.String())
 }
 
 func (r ResultEnum) UnmarshalJSON(data []byte) error {
-	switch data {
-	case []byte("success"):
+	sdata := string(data[:])
+	switch sdata {
+	case "success":
 		r = SUCCESS
 		return nil
-	case []byte("fail"):
+	case "fail":
 		r = FAIL
 		return nil
 	}
 
-	return errors.New("Uknown value for ResultEnum: " + data)
+	return errors.New("Uknown value for ResultEnum: " + sdata)
 }
 
 func (r ResultEnum) String() string {
@@ -37,6 +38,6 @@ func (r ResultEnum) String() string {
 	case FAIL:
 		return "fail"
 	default:
-		return "!INVALID VALUE (value: " + r + ")!"
+		return "!INVALID VALUE (value: " + string(r) + ")!"
 	}
 }
