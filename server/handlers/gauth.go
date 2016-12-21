@@ -7,6 +7,7 @@ import (
     "fmt"
 
 	"github.com/Noah-Huppert/squad-up/server/models"
+    "github.com/Noah-Huppert/squad-up/server/models/db"
 )
 
 // Exchange users Google Id Token for a Squad Up API token, essentially the "login" endpoint.
@@ -85,6 +86,12 @@ func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPR
 		httpResp.WithError("email_not_verified", "Your email is not verifeid with Google", http.StatusUnauthorized)
 		return httpResp
 	}
+
+    // Try and find Google user in our system
+    var user db.User
+    ctx.Db.First(&user, "email = ?", resp.Email)
+
+    fmt.Printf("User %v", user)
 
 	return httpResp
 }

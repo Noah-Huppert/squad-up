@@ -10,6 +10,7 @@ import (
     _ "github.com/jinzhu/gorm/dialects/postgres"
 
     "github.com/Noah-Huppert/squad-up/server/models"
+    tables "github.com/Noah-Huppert/squad-up/server/models/db"
 	"github.com/Noah-Huppert/squad-up/server/handlers"
 )
 
@@ -23,6 +24,9 @@ func main() {
     } else {
         fmt.Println("Connected to database on :5432")
     }
+
+    // Setup DB
+    db.AutoMigrate(&tables.User{})
 
     // Create App Context
     ctx := models.AppContext{db}
