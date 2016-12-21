@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+    "fmt"
 
 	"github.com/Noah-Huppert/squad-up/server/models"
-	"fmt"
 )
 
 // Exchange users Google Id Token for a Squad Up API token, essentially the "login" endpoint.
-func ExchangeTokenHandler (r *http.Request) models.HTTPResponse {
+func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPResponse {
 	httpResp := models.HTTPResponse{}
 
 	// Get id_token passed in request

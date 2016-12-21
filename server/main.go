@@ -9,25 +9,30 @@ import (
 	"github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/postgres"
 
+    "github.com/Noah-Huppert/squad-up/server/models"
 	"github.com/Noah-Huppert/squad-up/server/handlers"
 )
 
 // Main entry point of program.
 func main() {
+    // Connect to DB
     db, err := gorm.Open("postgres", "host=localhost user=username password=password dbname=squad-up sslmode=disable")
     defer db.Close()
-
     if err != nil {
         fmt.Println("Error connecting to database: " + err.Error())
     } else {
         fmt.Println("Connected to database on :5432")
     }
 
+    // Create App Context
+    ctx := models.AppContext{db}
+
 	// New HTTP router.
 	mux := http.NewServeMux()
 
 	// Attach handlers
-	handlers.LoadAll(mux)
+    handlerLoader := handlers.HandlerLoader{mux, &ctx}
+    handlerLoader.Load()
 
 	// Start listening on any host, port 5000.
 	fmt.Println("Listening on :5000")
