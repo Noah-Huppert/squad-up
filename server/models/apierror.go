@@ -20,6 +20,7 @@ type APIError struct {
 //
 // This field is here for use when an error occurs marshalling an HTTPResponse object to send to a client.
 // It was put in this file (Although used elsewhere) so that is is kept up to date with any field changes of APIError.
+// TODO: Rename to CamelCase
 var API_ERROR_MANUAL_MARSHALLED_ERROR_MARSHALLING_HTTP_RESPONSE = "{" +
                                                             "\"error\":" +
                                                                 "{" +
