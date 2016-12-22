@@ -8,7 +8,7 @@ import (
 )
 
 type HTTPResponse struct {
-	Error  *APIError  `json:"error"`
+    Error  *APIError  `json:"error"`
 }
 
 // Serve HTTPResponse struct as JSON with appropriate HTTP status code.

@@ -3,6 +3,7 @@ import:
 - package: github.com/jinzhu/gorm
   version: v1.0
 - package: github.com/lib/pq
+- package: github.com/fatih/structs
 testImport:
 - package: github.com/stretchr/testify
   subpackages:

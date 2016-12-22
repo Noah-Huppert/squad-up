@@ -21,6 +21,7 @@ func main() {
     defer db.Close()
     if err != nil {
         fmt.Println("Error connecting to database: " + err.Error())
+        return
     } else {
         fmt.Println("Connected to database on :5432")
     }
@@ -35,7 +36,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Attach handlers
-    handlerLoader := handlers.HandlerLoader{mux, &ctx}
+    handlerLoader := handlers.NewLoader(mux, &ctx)
     handlerLoader.Load()
 
 	// Start listening on any host, port 5000.

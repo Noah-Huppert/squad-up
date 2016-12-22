@@ -10,15 +10,21 @@ import (
     "github.com/Noah-Huppert/squad-up/server/models/db"
 )
 
+type ExchangeTokenHandler struct {}
+
+type exchangeResponse struct {
+    User db.User
+}
+
 // Exchange users Google Id Token for a Squad Up API token, essentially the "login" endpoint.
-func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPResponse {
-	httpResp := models.HTTPResponse{}
+func (h ExchangeTokenHandler) Serve (ctx *models.AppContext, r *http.Request) (interface{}, *models.APIError) {
+	httpResp := exchangeResponse{}
 
 	// Get id_token passed in request
 	idToken := r.PostFormValue("id_token")
 	if len(idToken) == 0 {
-		httpResp.WithError("missing_param", "`id_token` must be provided as a post parameter", http.StatusUnprocessableEntity)
-		return httpResp
+		err := &models.APIError{"missing_param", "`id_token` must be provided as a post parameter", http.StatusUnprocessableEntity}
+		return nil, err
 	}
 
 	// Make request to token info Gapi. This lets Google take care of
@@ -27,8 +33,9 @@ func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPR
 	res, err := http.Get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + idToken)
 	if err != nil {
 		fmt.Printf("Error sending HTTP request to verify id token: %s\n", err)
-		httpResp.WithError("http_err_verifying_id_token", "An error occured while contacting Google servers to verify your identity", http.StatusInternalServerError)
-		return httpResp
+
+		err := &models.APIError{"http_err_verifying_id_token", "An error occured while contacting Google servers to verify your identity", http.StatusInternalServerError}
+		return nil, err
 	}
 
 	// Read response body
@@ -36,8 +43,9 @@ func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPR
 	res.Body.Close()
 	if err != nil {
 		fmt.Printf("Error reading body of response to verify id token %s\n", err)
-		httpResp.WithError("body_read_err_verifying_id_token", "We couldn't read the Google server's response while verifying your identity", http.StatusInternalServerError)
-		return httpResp
+
+		err := &models.APIError{"body_read_err_verifying_id_token", "We couldn't read the Google server's response while verifying your identity", http.StatusInternalServerError}
+		return nil, err
 	}
 
 	// Struct to unmarshal json resp into. Not all fields are
@@ -70,28 +78,29 @@ func ExchangeTokenHandler (ctx *models.AppContext, r *http.Request) models.HTTPR
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
 		fmt.Printf("Error decoding json response: %s\n", err)
-		httpResp.WithError("json_parse_err_verifying_id_token", "We couldn't understand the response the Google server's gave us while verifying your identity", http.StatusInternalServerError)
-		return httpResp
+
+		err := &models.APIError{"json_parse_err_verifying_id_token", "We couldn't understand the response the Google server's gave us while verifying your identity", http.StatusInternalServerError}
+		return nil, err
 	}
 
 	// Check
 	// Check that aud is our client id
 	if resp.Aud != models.GapiConf.ClientId {
-		httpResp.WithError("invalid_id_token", "Google login not valid", http.StatusUnauthorized)
-		return httpResp
+		err := &models.APIError{"invalid_id_token", "Google login not valid", http.StatusUnauthorized}
+		return nil, err
 	}
 
 	// Check that email is verified
 	if resp.EmailVerified == false {
-		httpResp.WithError("email_not_verified", "Your email is not verifeid with Google", http.StatusUnauthorized)
-		return httpResp
+		err := &models.APIError{"email_not_verified", "Your email is not verifeid with Google", http.StatusUnauthorized}
+		return nil, err
 	}
 
     // Try and find Google user in our system
     var user db.User
     ctx.Db.First(&user, "email = ?", resp.Email)
 
-    fmt.Printf("User %v", user)
+    httpResp.User = user
 
-	return httpResp
+	return httpResp, nil
 }

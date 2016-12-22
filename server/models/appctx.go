@@ -7,3 +7,7 @@ import (
 type AppContext struct {
     Db *gorm.DB
 }
+
+type AppContextProvider interface {
+    Ctx () *AppContext
+}

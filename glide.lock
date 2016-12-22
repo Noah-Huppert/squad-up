@@ -1,6 +1,8 @@
-hash: 29f53353b5947764f6fd7be09fba9d4305fb3c70f635267ff2e41b2d095c1b6a
-updated: 2016-12-20T17:58:09.928626722-05:00
+hash: 39cfad7b78c0be5684856ba94ef764b85d0f8e09ee6596451e3c23ad7d721075
+updated: 2016-12-21T20:20:45.654269421-05:00
 imports:
+- name: github.com/fatih/structs
+  version: dc3312cb1a4513a366c4c9e622ad55c32df12ed3
 - name: github.com/jinzhu/gorm
   version: 5174cc5c242a728b435ea2be8a2f7f998e15429b
   subpackages:
