@@ -13,7 +13,7 @@ import (
 type ExchangeTokenHandler struct {}
 
 type exchangeResponse struct {
-    User db.User
+    User db.User `json:"user"`
 }
 
 // Exchange users Google Id Token for a Squad Up API token, essentially the "login" endpoint.
@@ -96,10 +96,15 @@ func (h ExchangeTokenHandler) Serve (ctx *models.AppContext, r *http.Request) (i
 		return nil, err
 	}
 
-    // Try and find Google user in our system
+    // Find or create User
     var user db.User
-    ctx.Db.First(&user, "email = ?", resp.Email)
-
+    ctx.Db.FirstOrCreate(&user,
+                        db.User{
+                            FirstName: resp.GivenName,
+                            LastName: resp.FamilyName,
+                            Email: resp.Email,
+                            ProfilePictureUrl: resp.Picture,
+                        })
     httpResp.User = user
 
 	return httpResp, nil
