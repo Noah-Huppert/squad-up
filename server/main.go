@@ -30,7 +30,13 @@ func main() {
     db.AutoMigrate(&tables.User{})
 
     // Create App Context
-    ctx := models.AppContext{db}
+    config := models.Config{
+        GAPIClientId: "432144215744-2n6fha955i4f2en9jubvelfhmdsh1jcv.apps.googleusercontent.com",
+        JWTServerURI: "squad-up@server/api/v1",
+        JWTHMACKey: "abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrst",
+    }
+
+    ctx := models.AppContext{config, db}
 
 	// New HTTP router.
 	mux := http.NewServeMux()

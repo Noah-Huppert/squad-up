@@ -59,6 +59,7 @@ var RecursionMaxDepth = 20
 func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]interface{}, error) {
     result := make(map[string]interface{}, 0)
 
+
     // Loop over fields
     fields := s.Fields()
     for _, field := range fields {

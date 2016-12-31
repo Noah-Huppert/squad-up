@@ -5,15 +5,21 @@ import (
 	"io/ioutil"
 	"net/http"
     "fmt"
+    "time"
 
 	"github.com/Noah-Huppert/squad-up/server/models"
     "github.com/Noah-Huppert/squad-up/server/models/db"
+
+    "github.com/satori/go.uuid"
+    "github.com/SermoDigital/jose/jws"
+    "github.com/SermoDigital/jose/crypto"
 )
 
 type ExchangeTokenHandler struct {}
 
 type exchangeResponse struct {
     User db.User `json:"user"`
+    AccessToken string `json:"access_token"`
 }
 
 // Exchange users Google Id Token for a Squad Up API token, essentially the "login" endpoint.
@@ -85,7 +91,7 @@ func (h ExchangeTokenHandler) Serve (ctx *models.AppContext, r *http.Request) (i
 
 	// Check
 	// Check that aud is our client id
-	if resp.Aud != models.GapiConf.ClientId {
+	if resp.Aud != ctx.Config.GAPIClientId {
 		err := &models.APIError{"invalid_id_token", "Google login not valid", http.StatusUnauthorized}
 		return nil, err
 	}
@@ -106,6 +112,26 @@ func (h ExchangeTokenHandler) Serve (ctx *models.AppContext, r *http.Request) (i
                             ProfilePictureUrl: resp.Picture,
                         })
     httpResp.User = user
+
+    // Issue Access Token
+    claims := jws.Claims{}
+    claims.SetIssuer(ctx.Config.JWTServerURI)
+    claims.SetSubject(string(user.ID))
+    claims.SetAudience(ctx.Config.JWTServerURI)
+    claims.SetExpiration(time.Now().AddDate(0, 0, 14))// 2 weeks
+    claims.SetIssuedAt(time.Now())
+    claims.SetJWTID(uuid.NewV4().String())
+
+    jwt := jws.NewJWT(claims, crypto.SigningMethodHS512)
+
+    accessToken, err := jwt.Serialize([]byte(ctx.Config.JWTHMACKey))
+    if err != nil {
+        fmt.Println("Error serializing jwt: " + err.Error())
+        err := &models.APIError{"err_generating_access_token", "An internal error occured while generating the access token", http.StatusInternalServerError}
+        return nil, err
+    }
+
+    httpResp.AccessToken = string(accessToken)
 
 	return httpResp, nil
 }

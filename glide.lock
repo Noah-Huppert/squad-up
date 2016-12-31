@@ -1,8 +1,8 @@
-hash: 39cfad7b78c0be5684856ba94ef764b85d0f8e09ee6596451e3c23ad7d721075
-updated: 2016-12-21T20:20:45.654269421-05:00
+hash: a505653aad5cfd5e2bfc59c01c2e49d2227b87b2680b9c908005493ecd6604c5
+updated: 2016-12-31T17:13:19.252064236-05:00
 imports:
 - name: github.com/fatih/structs
-  version: dc3312cb1a4513a366c4c9e622ad55c32df12ed3
+  version: 1de5ce037865f641d8eb22007e31cc5292a54e12
 - name: github.com/jinzhu/gorm
   version: 5174cc5c242a728b435ea2be8a2f7f998e15429b
   subpackages:
@@ -10,10 +10,17 @@ imports:
 - name: github.com/jinzhu/inflection
   version: 74387dc39a75e970e7a3ae6a3386b5bd2e5c5cff
 - name: github.com/lib/pq
-  version: 5bf161122cd640c2a5a2c1d7fa49ea9befff31dd
+  version: 22cb3e4c487ce6242e2b03369219e5631eed1221
   subpackages:
   - hstore
   - oid
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/SermoDigital/jose
+  version: f6df55f235c24f236d11dbcf665249a59ac2021f
+  subpackages:
+  - crypto
+  - jwt
 testImports:
 - name: github.com/davecgh/go-spew
   version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9

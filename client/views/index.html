@@ -35,7 +35,7 @@
                         var idToken = gapi.auth2.getAuthInstance()["currentUser"].get().getAuthResponse().id_token;
 
                         var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "/api/v1/auth/google/token");
+                        xhr.open("POST", "/api/v1/auth/token/google");
                         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                         xhr.onload = function() {
                             console.log(xhr.responseText);

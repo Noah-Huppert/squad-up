@@ -85,7 +85,7 @@ func (h handler) ServeHTTP (w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set headers
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 
 
 	// Send response with custom status code
@@ -137,5 +137,5 @@ func (l Loader) Load() {
     l.mux.HandleFunc("/", ServeIndex)
 
     // API
-    l.register("/api/v1/auth/google/token", ExchangeTokenHandler{})
+    l.register("/api/v1/auth/token/google", ExchangeTokenHandler{})
 }
