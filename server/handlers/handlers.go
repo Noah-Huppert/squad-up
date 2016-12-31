@@ -125,17 +125,25 @@ func (l Loader) Ctx () *models.AppContext {
 }
 
 // register's the provided handler for the provided path with the http.ServeMux
-func (l Loader) register (path string, eHdlr EndpointHandler) {
+func (l Loader) registerEndpoint(path string, eHdlr EndpointHandler) {
     hdlr := handler{eHdlr, l}
 
     l.mux.Handle(path, hdlr)
 }
 
+func (l Loader) registerFile (path, file string) {
+    l.mux.HandleFunc(path, func (w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, file)
+    })
+}
+
 func (l Loader) Load() {
-    // Static paths
+    // Resources
     l.mux.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("bower_components"))))
+
+    // Pages
     l.mux.HandleFunc("/", ServeIndex)
 
     // API
-    l.register("/api/v1/auth/token/google", ExchangeTokenHandler{})
+    l.registerEndpoint("/api/v1/auth/token/google", ExchangeTokenHandler{})
 }
