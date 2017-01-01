@@ -137,9 +137,15 @@ func (l Loader) registerFile (path, file string) {
     })
 }
 
+func (l Loader) registerDir (path, dir string) {
+    l.mux.Handle(path, http.StripPrefix(path, http.FileServer(http.Dir(dir))))
+}
+
 func (l Loader) Load() {
     // Resources
-    l.mux.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("bower_components"))))
+    l.registerDir("/lib/", "bower_components")
+    l.registerDir("/js/", "client/js")
+    l.registerDir("/css/", "client/css")
 
     // Pages
     l.mux.HandleFunc("/", ServeIndex)
