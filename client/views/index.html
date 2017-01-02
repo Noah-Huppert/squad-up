@@ -1,33 +1,45 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Squad Up</title>
+<head>
+    <!-- Set charset first -->
+    <meta charset="utf-8">
 
-        <!-- Meta -->
-        <!-- Mobile scale -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Disable tap outline on IE and Windows Phone -->
-        <meta name="msapplication-tap-highlight" content="no">
+    <title>Squad Up</title>
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="/css/styles.css">
+    <!-- Load manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Mobile scale -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Disable tap outline on IE and Windows Phone -->
+    <!--<meta name="msapplication-tap-highlight" content="no">-->
 
-        <!-- Web Components Polyfill for Polymer -->
-        <script src="/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/styles.css">
 
-        <!-- Polymer elements -->
-        <link rel="import" href="/lib/google-signin/google-signin.html">
+    <!-- Dexie: IndexedDB Wrapper -->
+    <scrip src="/lib/dexie/dist/dexie.es6.js"></scrip>
 
-    </head>
-    <body>
-        <x-app></x-app>
+    <!-- Web Components Polyfill for Polymer -->
+    <script src="/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
 
-        <dom-module id="x-app">
-            <template>
-                <google-signin id="sign-in-btn" client-id="432144215744-2n6fha955i4f2en9jubvelfhmdsh1jcv.apps.googleusercontent.com" scopes="profile"></google-signin>
-            </template>
+    <!-- Polymer elements -->
+    <link rel="import" href="/lib/google-signin/google-signin-aware.html">
+    <link rel="import" href="/lib/google-signin/google-signin.html">
 
-            <script src="/js/main.js"></script>
-        </dom-module>
-    </body>
+</head>
+<body>
+    <x-app></x-app>
+
+    <dom-module id="x-app">
+        <template>
+            <google-signin-aware
+                scopes="profile"
+                client-id="432144215744-2n6fha955i4f2en9jubvelfhmdsh1jcv.apps.googleusercontent.com">
+            </google-signin-aware>
+            <!--<google-signin id="sign-in-btn" client-id="" scopes="profile"></google-signin>-->
+        </template>
+
+        <script src="/js/main.js"></script>
+    </dom-module>
+</body>
 </html>

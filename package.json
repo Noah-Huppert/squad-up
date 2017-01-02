@@ -1,0 +1,22 @@
+{
+  "name": "squad-up",
+  "version": "1.0.0",
+  "description": "Helps plan events with no worry",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noah-Huppert/squad-up.git"
+  },
+  "author": "Noah Huppert",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Noah-Huppert/squad-up/issues"
+  },
+  "homepage": "https://github.com/Noah-Huppert/squad-up#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
