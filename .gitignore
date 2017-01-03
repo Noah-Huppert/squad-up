@@ -1,3 +1,6 @@
+# Generated
+dist
+
 # Jetbrains
 *.iml
 .idea
@@ -7,4 +10,7 @@ bower_components
 
 # Golang
 vendor
+
+# NodeJS
+node_modules
 

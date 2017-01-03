@@ -1,0 +1,17 @@
+<!-- Dexie: IndexedDB Wrapper -->
+<scrip src="/lib/dexie/dist/dexie.es6.js"></scrip>
+
+<!-- Bower components -->
+<link rel="import" href="/lib/google-signin/google-signin-aware.html">
+
+<dom-module id="x-app">
+    <template>
+        <google-signin-aware
+            scopes="profile"
+            client-id="432144215744-2n6fha955i4f2en9jubvelfhmdsh1jcv.apps.googleusercontent.com">
+        </google-signin-aware>
+        <!--<google-signin id="sign-in-btn" client-id="" scopes="profile"></google-signin>-->
+    </template>
+
+    <script src="/components/x-app/x-app.js"></script>
+</dom-module>
