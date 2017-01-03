@@ -1,5 +1,5 @@
 # Data models
-To appropriate describe features the data we store has to be defined first. This 
+To appropriately describe features the data we store has to be defined first. This 
 data will be stored on the server and then retrieved by the client via an api. 
 
 This data is organized in a flat relational structure so it can be easily 
