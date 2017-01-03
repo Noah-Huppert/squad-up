@@ -6,14 +6,17 @@ var targets = ["client/components/**/*.js", "client/js/**/*.js"];
 
 var runI = 0;
 
-gulp.task("default", () => {
+func babelWatch (targets, out) {
     return watch(targets, () => {
-        console.log(`Transpiling (run #${runI})`);
+        console.log(`Transpiling ${out} (run #${runI})`);
         runI++;
 
         gulp.src(targets)
             .pipe(babel())
-            .pipe(gulp.dest("dist"));
-        // TODO: Figure out how to make it so dist has the sub dirs of {components,js}
+            .pipe(gulp.dest(`dist/${out}`));
     });
+}
+
+gulp.task("default", () => {
+    // TODO: Call babelWatch for components and js in parrallel
 });
