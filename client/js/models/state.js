@@ -1,5 +1,3 @@
-import Database from "/js/models/database";
-
 /**
  * Application state, sectioned off into different areas of responsibility (ex., authentication, database)
  * to maintain organization.
@@ -8,5 +6,6 @@ import Database from "/js/models/database";
 class State {
     constructor () {
         this.db = new Database();
+//        this.auth = new
     }
 }

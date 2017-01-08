@@ -1,5 +1,3 @@
-import State from "/js/models/state";
-
 Polymer({
     // Element namhttp://jinzhu.me/gorm/e
     is: "x-app",
@@ -8,8 +6,6 @@ Polymer({
     // Ready - Web components and Polymer are a OK
     ready: function() {
         console.log("x-app is ready");
-
-        this.listen(this.$["sign-in-btn"], "google-signin-success", "onGSignInSuccess");
     },
 
     // Application state

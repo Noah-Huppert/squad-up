@@ -144,9 +144,9 @@ func (l Loader) registerDir (path, dir string) {
 func (l Loader) Load() {
     // Resources
     l.registerDir("/lib/", "bower_components")
-    l.registerDir("/js/", "dist/js")
+    l.registerDir("/js/", "client/js")
+    l.registerDir("/components/", "client/components")
     l.registerDir("/css/", "client/css")
-    l.registerDir("/components/", "dist/components")
 
     // Pages
     l.mux.HandleFunc("/", ServeIndex)
