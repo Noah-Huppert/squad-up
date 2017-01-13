@@ -11,7 +11,7 @@ class State {
     constructor() {
         this.db = new Database();
 
-        var model = new Model("user");
+        var model = new Model("users");
         model.id = 1;
 
         model.load(this);
