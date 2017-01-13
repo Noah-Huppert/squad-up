@@ -1,4 +1,8 @@
 class Database {
+    class () {
+        return "Database";
+    }
+
     constructor() {
         // DB name
         this.name = "SquadUpDatabase";

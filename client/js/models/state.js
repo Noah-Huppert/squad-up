@@ -4,8 +4,16 @@
  * Basically a masthead.
  */
 class State {
-    constructor () {
+    class() {
+        return "State";
+    }
+
+    constructor() {
         this.db = new Database();
-//        this.auth = new
+
+        var model = new Model("user");
+        model.id = 1;
+
+        model.load(this);
     }
 }
