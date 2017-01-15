@@ -18,45 +18,46 @@ But low priority until I start deploying Squad Up (Because "it works on my syste
 Squad Up's technical architecture is pretty simple:
 
 - Postgres database stores information
-- Golang server provides API and servers static web page
+- Golang server provides API and serves static web page
 - Static web page consumes API to access information
 
 Squad Up's directory architecture is a bit more confusing:
 
 - `/bower_components`
-    - Frontend assets managed by [Bower](https://bower.io/)
-    - Served under the `/lib` path by server
-- `/client` - Frontend resources
+    - Frontend assets managed by [Bower](https://bower.io/).
+    - Served under the `/lib` path by server.
+- `/client` - Frontend resources.
     - `/components` 
-        - Web components
-        - Server under the `/components` path by server
+        - Web components source.
+        - Served under the `/components` path by server.
     - `/css`
-        - CSS resources
-        - Served under the `/css` path by server
+        - CSS resources.
+        - Served under the `/css` path by server.
     - `/js`
-        - JavaScript resources
-        - Served under the `/js` path by server
+        - JavaScript resources.
+        - Served under the `/js` path by server.
     - `/views`
-        - Client side views
-    - `manifest.json` - Web App manifest
-- `/server` - Server source
-    - `/handlers` - HTTP route handlers
-    - `/models` - "Models" / Any sort of data structure
-        - `/db` - Models for Database
-        - `/utils` - Helper utilities
-    - `main.go` - Server entry point
+        - Client side views.
+    - `manifest.json` - Web App manifest.
+- `/server` - Server source.
+    - `/handlers` - HTTP route handlers.
+    - `/models` - "Models" / Any sort of data structure.
+        - `/db` - Models for Database.
+        - `/utils` - Helper utilities.
+    - `main.go` - Server entry point.
 - `/vendor`
-    - Server libraries managed by [Glide](https://glide.sh/)
+    - Server libraries managed by [Glide](https://glide.sh/).
     
 ## Setup 
-- 1. Create Database Docker container
+- 1. Create Database Docker container.
     - If you have already completed this step once on your computer you 
-      shouldn't have to run it again.
+      shouldn't have to do it again.
     - Run `make db-create`.
         - This command creates a Docker container running Postgres as our 
           database.
-        - If the Docker container has already been created you will get an 
-          error about the `The name "/squad-up-postgres"` already being taken.
+        - If the Docker container has already been created (aka., you already 
+          did this step) you will get an error about the `The name 
+          "/squad-up-postgres"` already being taken.
 - 2. Install client side libraries with Bower.
     - You only have to run this command if the libraries listed in `bower.json` 
       change or on first time setup.
@@ -73,12 +74,13 @@ Squad Up's directory architecture is a bit more confusing:
     - If you just created the database container it should already be running 
       so you can skip this step.
     - Otherwise run `make db-start`.
-        - This command starts the database Docker container we created previously.
+        - This command starts the database Docker container we created previously 
+           in Setup step 1.
 - 2. Start Golang server.
     - You have to restart the server every single time you make a change to any 
       file that is not a static asset.
         - So changing pretty much anything in the `/client` directory doesn't 
-          require a restart but anything is the `/server` directory does.
+          require a restart but anything in the `/server` directory does.
     - Run `make app-run`
         - This runs the Golang server from the entry point `/server/main.go`.
         
@@ -94,4 +96,4 @@ Squad Up's directory architecture is a bit more confusing:
           again.
 - 2. Stopping Golang server
     - You can stop the server by sending the `SIGINT` signal.
-    - This is done in most terminals by using the key combo `CTRL + C`.
+    - This is done in most terminals by using the key combination `CTRL + C`.
