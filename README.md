@@ -3,10 +3,10 @@ Helps plan events with no worry
 
 # Contributing
 The entire point of making this open source was so other people could contribute 
-if they wanted. If you think of an idea for a feature of find a problem don't 
+if they wanted. If you think of an idea for a feature or find a problem don't 
 hesitate to open a new Github issue.  
 
-If you are looking for things to do check out the Github issue tracker and see 
+If you are looking for things to do: check out the Github issue tracker and see 
 if there are any issues tagged "help wanted". In the future I will also start 
 marking issues as good issues to start with (Like a lot of open source projects) 
 for beginners.
