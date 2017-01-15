@@ -48,6 +48,44 @@ Squad Up's directory architecture is a bit more confusing:
 - `/vendor`
     - Server libraries managed by [Glide](https://glide.sh/).
     
+## Downloading
+If you are familiar with Golang and the `GOPATH` then:  
+Clone this repository down in `$GOPATH/src/github.com/Noah-Huppert/squad-up` and 
+skip to the Setup section.  
+
+If this is your first project using Golang and have no idea what the `GOPATH` is
+then don't worry, I'll do my best to explain all that:  
+
+Go requires that you put all your Go related projects in one directory 
+following a specific pattern, like a workspace (Why it requires this is way beyond the 
+scope of these docs). So lets make that directory:
+
+- 1. Create a directory named `go` on your computer.
+    - Place this directory where you normally place your projects.
+- 2. In your terminal profile set the environment variable `GOPATH` to be the 
+     path of the `go` folder.
+- 3. This `go` directory will now be referred to as the `GOPATH`.
+
+Further inside of the `GOPATH` Go requires that you put all your projects 
+in the `$GOPATH/src` directory. Inside of this `$GOPATH/src` directory 
+projects are stored similar to Java projects:  
+
+- Each project has a collision resistant package name.
+    - In Go these package names follow the scheme `github.com/Username/Project` 
+      (Where as in Java they follow: `com.username.project`).
+- Each "sub package" of the package name is a new directory.
+    - In Go "sub packages" are separated by forward slashes (In Java they are 
+      separated by dots).
+    - So the package name `github.com/Username/Project` would yield the directory 
+    structure of:
+        - `/github.com`
+            - `/Username`
+                - `Project`
+
+Squad Up's package name is `github.com/Noah-Huppert/squad-up` so it should be 
+stored in the directory `$GOPATH/src/github.com/Noah-Huppert/squad-up`. So 
+all you have to do now is clone this repo into that path.
+
 ## Setup 
 - 1. Create Database Docker container.
     - If you have already completed this step once on your computer you 
