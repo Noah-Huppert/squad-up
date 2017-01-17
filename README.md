@@ -6,10 +6,12 @@ The entire point of making this open source was so other people could contribute
 if they wanted. If you think of an idea for a feature or find a problem don't 
 hesitate to open a new Github issue.  
 
-If you are looking for things to do: check out the Github issue tracker and see 
-if there are any issues tagged "help wanted". In the future I will also start 
-marking issues as good issues to start with (Like a lot of open source projects) 
-for beginners.
+## If you are looking for things to do
+Check out the Github issue tracker and see 
+if there are any issues labeled "help wanted" or "good for beginners". Issues with 
+the "help wanted" label are tasks that need to be completed but don't have anyone 
+working on them. Issues with the "good for beginners" label are tasks that are simple 
+enough and do not require an in depth knowledge of systems architecture to complete.
 
 Check out the Development section below to get started.
 
