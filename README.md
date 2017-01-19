@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/Noah-Huppert/squad-up.svg?branch=master)](https://travis-ci.org/Noah-Huppert/squad-up)
-[![Coverage Status](https://coveralls.io/repos/github/Noah-Huppert/squad-up/badge.svg?branch=ci)](https://coveralls.io/github/Noah-Huppert/squad-up?branch=ci)
+[![Coverage Status](https://coveralls.io/repos/github/Noah-Huppert/squad-up/badge.svg?branch=master)](https://coveralls.io/github/Noah-Huppert/squad-up?branch=master)
 # Squad Up
 Helps plan events with no worry
 
