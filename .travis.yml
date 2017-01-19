@@ -1,0 +1,18 @@
+language: go
+go: 1.7.4
+git:
+  submodules: false
+before_install:
+- mkdir -p $GOPATH/bin
+- curl https://glide.sh/get | sh
+install:
+- glide install
+- go get github.com/go-playground/overalls
+- go get github.com/mattn/goveralls
+script:
+- overalls -project=github.com/Noah-Huppert/squad-up -covermode=count -debug
+after_success:
+- goveralls -coverprofile=overalls.coverprofile -service travis-ci -repotoken $COVERALLS_TOKEN
+env:
+  global:
+    secure: fPGlj3blIHcNljXdb5ZaqtnfGCj3M8rQvmpa4t1NTm9EwH+GdNuCKWHuag/cxB+KjPVRpfY0xj3THEgXuUQ9A1AkFkLan4uryf16li+lu2TYXo7KMWKfEI9QqmHRtWDY1w7M+/ryy32g0L1Gb4BRbqEYrFd2Ypy8hJ9QyHXSfheI8uimOSqNmv8ShgimJkxxiEgtiUF2oYjS8fEqL7PC6KgThu6RSXCMOdThNdZoCaXZF8eYC1/6s11HHMOeWBNu8FBQEe/w8AJTvW/i8TeCcF0DHnwtsC4/wjvYbTBOKdfNufh/HJxV6epxUpi8lf7ZokO4g3dc9bpGXqXhMWRCIgkC5xgEseZ40cjui9+kd31TGarm0IHIOl+4SgsY0nRHyFBPAqFI1HEVEaUQe6m8LbL+hQLw8y2jgPLa7qmhztrQgALR/eZuTERLqusUxsBWq2bMe0EsgO6iq/x1mc8OftpLb6fxTtpW8+Nbh7Kpl0B1pEeakdYpl7gNtAiVdzumgHGJKYU9+4pIZyNSvksXvJdW8gjy3j02H2UiW5Cty3FS4GOv7j+0NZzZl5d+Zj+6nrFdBX/xE6XHocDqObaArm1CpGXEgPDsIClXcWyPn75F7zTS/S8K4R+NK6pVzaAKIb5XWhwjfBZMnRQt1/iqelce+4ebqaaVbDn+h+wMfew=
