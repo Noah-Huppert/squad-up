@@ -1,5 +1,14 @@
 language: go
 go: 1.7.4
+# Submodules on Travis CI creds to SO: http://stackoverflow.com/a/24600210/1478191
+git:
+    # Handle git submodules ourselves
+    submodules: false
+before_install:
+    # Use sed to replace SSH URL with public URL
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    # Init submodules
+    - git submodule update --init --recursive
 before_install:
   - curl https://glide.sh/get | sh
 install:
