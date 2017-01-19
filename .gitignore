@@ -1,5 +1,6 @@
-# Generated
-dist
+# Testing
+test
+*.coverprofile
 
 # Jetbrains
 *.iml
