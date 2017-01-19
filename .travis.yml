@@ -19,7 +19,7 @@ install:
 script:
   - overalls -project=github.com/Noah-Huppert/squad-up -covermode=count -debug
 after_success:
-  - goveralls -coverprofile=overalls.coverprofile -service semaphore -repotoken $COVERALLS_TOKEN
+  - goveralls -coverprofile=overalls.coverprofile -service travis-ci -repotoken $COVERALLS_TOKEN
 env:
   global:
     secure: Ml52Psgzq21k71wL6Hx74fBbhuGq6IUYQCzT9wlv6p0NTVqSwpSWqoX/JZaOzfk45r0o14j+iIUPgX+AZwI3i54fvOgd79e32r2xBrh88I1EhMjWLeeFR3HwOMmvlRdnzcGajiOR3mvMJEUll9+KSUugA/VVtpZHqtEg+hjkymhTfFEBO6y0V5vP28Sz/0g0kNHEc9sr4SR0c+rTPaIdm5ELwOXh7H9PJIArIGjcyhLs7jx8kT8yU6p3eL3+MW2pvt7Z61TqahDPaqORzxASLlYSGc3tNVFxtlyNa6s4LW7FJnCDGp/Hep8M+e8+RAcyVxEyTcM6Oa9IzlffyE5fqHiuSEAbydZpNvLN37JMOsqnI3hjpEKDQqzGbibCCjSt4kH5lIIguxts60lWsqi9ChZTf7r55OGcNCyq4vyfQEuH5yLBuvn6jxBcgPNvdJDm3K9RXGMJJjwf38Y6HHg2wWLcztLhTO9DJetayVtt8aDJAAClfz3bqodgiKAqCkvpFZ5FoRtyHTYdGc1uUA5Oq8vQx1pLJk3QIUhZhJ5GcFgJw2/1cJsb9weJFFGQC0YMyjqPuZTesGQn93/DjQsLlArmy4/SNUrJHC6yoUyV7JlDYlK+/bXrWaxaOpCU5VZUvc2dkPecFl0ZdmGBFZJrm57CP7IQEMnfB3CHLYgHHlg=
