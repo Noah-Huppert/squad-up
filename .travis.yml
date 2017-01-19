@@ -9,9 +9,10 @@ before_install:
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
     # Init submodules
     - git submodule update --init --recursive
-install:
-  - echo $GOPATH
+before_install:
+  - mkdir -p $GOPATH/bin
   - curl https://glide.sh/get | sh
+install:
   - glide install
 script:
   - overalls -project=github.com/Noah-Huppert/squad-up -covermode=count -debug
