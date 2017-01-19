@@ -1,25 +1,18 @@
 language: go
 go: 1.7.4
-# Submodules on Travis CI creds to SO: http://stackoverflow.com/a/24600210/1478191
 git:
-    # Handle git submodules ourselves
-    submodules: false
+  submodules: false
 before_install:
-    # Use sed to replace SSH URL with public URL
-    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
-    # Init submodules
-    - git submodule update --init --recursive
-before_install:
-  - mkdir -p $GOPATH/bin
-  - curl https://glide.sh/get | sh
+- mkdir -p $GOPATH/bin
+- curl https://glide.sh/get | sh
 install:
-  - glide install
-  - go get github.com/go-playground/overalls
-  - go get github.com/mattn/goveralls
+- glide install
+- go get github.com/go-playground/overalls
+- go get github.com/mattn/goveralls
 script:
-  - overalls -project=github.com/Noah-Huppert/squad-up -covermode=count -debug
+- overalls -project=github.com/Noah-Huppert/squad-up -covermode=count -debug
 after_success:
-  - goveralls -coverprofile=overalls.coverprofile -service travis-ci -repotoken $COVERALLS_TOKEN
+- goveralls -coverprofile=overalls.coverprofile -service travis-ci -repotoken $COVERALLS_TOKEN
 env:
   global:
-    secure: Ml52Psgzq21k71wL6Hx74fBbhuGq6IUYQCzT9wlv6p0NTVqSwpSWqoX/JZaOzfk45r0o14j+iIUPgX+AZwI3i54fvOgd79e32r2xBrh88I1EhMjWLeeFR3HwOMmvlRdnzcGajiOR3mvMJEUll9+KSUugA/VVtpZHqtEg+hjkymhTfFEBO6y0V5vP28Sz/0g0kNHEc9sr4SR0c+rTPaIdm5ELwOXh7H9PJIArIGjcyhLs7jx8kT8yU6p3eL3+MW2pvt7Z61TqahDPaqORzxASLlYSGc3tNVFxtlyNa6s4LW7FJnCDGp/Hep8M+e8+RAcyVxEyTcM6Oa9IzlffyE5fqHiuSEAbydZpNvLN37JMOsqnI3hjpEKDQqzGbibCCjSt4kH5lIIguxts60lWsqi9ChZTf7r55OGcNCyq4vyfQEuH5yLBuvn6jxBcgPNvdJDm3K9RXGMJJjwf38Y6HHg2wWLcztLhTO9DJetayVtt8aDJAAClfz3bqodgiKAqCkvpFZ5FoRtyHTYdGc1uUA5Oq8vQx1pLJk3QIUhZhJ5GcFgJw2/1cJsb9weJFFGQC0YMyjqPuZTesGQn93/DjQsLlArmy4/SNUrJHC6yoUyV7JlDYlK+/bXrWaxaOpCU5VZUvc2dkPecFl0ZdmGBFZJrm57CP7IQEMnfB3CHLYgHHlg=
+    secure: fPGlj3blIHcNljXdb5ZaqtnfGCj3M8rQvmpa4t1NTm9EwH+GdNuCKWHuag/cxB+KjPVRpfY0xj3THEgXuUQ9A1AkFkLan4uryf16li+lu2TYXo7KMWKfEI9QqmHRtWDY1w7M+/ryy32g0L1Gb4BRbqEYrFd2Ypy8hJ9QyHXSfheI8uimOSqNmv8ShgimJkxxiEgtiUF2oYjS8fEqL7PC6KgThu6RSXCMOdThNdZoCaXZF8eYC1/6s11HHMOeWBNu8FBQEe/w8AJTvW/i8TeCcF0DHnwtsC4/wjvYbTBOKdfNufh/HJxV6epxUpi8lf7ZokO4g3dc9bpGXqXhMWRCIgkC5xgEseZ40cjui9+kd31TGarm0IHIOl+4SgsY0nRHyFBPAqFI1HEVEaUQe6m8LbL+hQLw8y2jgPLa7qmhztrQgALR/eZuTERLqusUxsBWq2bMe0EsgO6iq/x1mc8OftpLb6fxTtpW8+Nbh7Kpl0B1pEeakdYpl7gNtAiVdzumgHGJKYU9+4pIZyNSvksXvJdW8gjy3j02H2UiW5Cty3FS4GOv7j+0NZzZl5d+Zj+6nrFdBX/xE6XHocDqObaArm1CpGXEgPDsIClXcWyPn75F7zTS/S8K4R+NK6pVzaAKIb5XWhwjfBZMnRQt1/iqelce+4ebqaaVbDn+h+wMfew=
