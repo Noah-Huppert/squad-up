@@ -9,9 +9,10 @@ if they wanted. If you think of an idea for a feature or find a problem don't
 hesitate to open a new Github issue.  
 
 ## If you are looking for things to do
-Check out the Github issue tracker and see 
-if there are any issues labeled "help wanted" or "good for beginners". Issues with 
-the "help wanted" label are tasks that need to be completed but don't have anyone 
+Check out the Github issue tracker and see if there are any issues labeled 
+[`help wanted`](https://github.com/Noah-Huppert/squad-up/labels/help%20wanted) or 
+[`good for beginners`](https://github.com/Noah-Huppert/squad-up/labels/good%20for%20beginners). 
+Issues with the "help wanted" label are tasks that need to be completed but don't have anyone 
 working on them. Issues with the "good for beginners" label are tasks that are simple 
 enough and do not require an in depth knowledge of systems architecture to complete.
 
@@ -89,8 +90,8 @@ projects are stored similar to Java projects:
 - Each project has a collision resistant package name.
     - In Go these package names follow the scheme `github.com/Username/Project` 
       (Where as in Java they follow: `com.username.project`).
-- Each "sub package" of the package name is a new directory.
-    - In Go "sub packages" are separated by forward slashes (In Java they are 
+- Each sub package of the package name is a new directory.
+    - In Go sub packages are separated by forward slashes (In Java they are 
       separated by dots).
     - So the package name `github.com/Username/Project` would yield the directory 
     structure of:
@@ -141,8 +142,7 @@ all you have to do now is clone this repo into that path.
 ## Stopping
 - 1. Stop Database Docker container.
     - Run `make db-stop`
-        - This stops the Database Docker container we created in Setup step 1 
-          and started in Running step 1.
+        - This stops the Database Docker container we created in Setup step 1.
     - If you would like to destroy the Database Docker container then run 
       `make db-destroy`.
         - This will delete the Database Docker container and all its data.
