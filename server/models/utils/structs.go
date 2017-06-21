@@ -59,6 +59,8 @@ var RecursionMaxDepth = 20
 //
 // Returns converted map and error
 func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]interface{}, error) {
+    recursionCounter++
+
     if (recursionCounter > recursionMax) {
         return nil, errors.New("Recursed past level specified in recursionMax")
     }
