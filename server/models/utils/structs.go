@@ -11,7 +11,7 @@ var RecursionMaxDepth = 20
 // Converts a struct into a map with string keys and interface{} values.
 // Takes a structs.Struct as input, this type was chosen to indicate that this method is for use on structs.
 //
-// Merges embedded types fields into main struct to mimic the implied "inheritance".
+// Merges embedded type's fields into main struct to mimic the implied "inheritance".
 // If an embedded type is not a struct than it will be treated like a normal KV pair.
 //
 // If an embedded type and the main struct have colliding keys the problematic keys from the embedded type will be placed
@@ -55,10 +55,15 @@ var RecursionMaxDepth = 20
 //     If the main struct has a key with the same name as the name of an embedded type and a collided key needs to be
 //     merged an error will be thrown.
 //
+// Returns error if recursed past level specified by recursionMax
+//
 // Returns converted map and error
 func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]interface{}, error) {
-    result := make(map[string]interface{}, 0)
+    if (recursionCounter > recursionMax) {
+        return nil, errors.New("Recursed past level specified in recursionMax")
+    }
 
+    result := make(map[string]interface{}, 0)
 
     // Loop over fields
     fields := s.Fields()
