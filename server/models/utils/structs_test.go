@@ -31,6 +31,13 @@ type ExportTest struct {
     dField string
 }
 
+// Struct for DoesNotMarshalIfJsonIgnoreTagPresent test
+type JsonIgnoreTagTest struct {
+    AField string
+    BField string `json:"-"`
+    CField string
+}
+
 func TestStructs_toMap_ErrorWhenOverRecursionMax(t *testing.T) {
     a := assert.New(t)
 
@@ -80,6 +87,30 @@ func TestStructs_toMap_DoesNotMarshalUnexportedFields(t *testing.T) {
         bField: "bfield",
         CField: "cfield",
         dField: "dfield",
+    }
+
+    strct := structs.New(obj)
+
+    // Test
+    res, err := toMap(strct, DefaultRecursionMaxDepth, 0)
+
+    a.Equal(map[string]interface{}{
+        "AField": "afield",
+        "CField": "cfield",
+    }, res)
+    a.Nil(err)
+}
+
+// Tests that toMap does not marshal fields which have the "json:-" tag
+// As this designates that the field should not be marshaled
+func TestStructs_toMap_DoesNotMarshalIfJsonIgnoreTagPresent(t *testing.T) {
+    a := assert.New(t)
+
+    // Make struct
+    obj := JsonIgnoreTagTest{
+        AField: "afield",
+        BField: "bfield",
+        CField: "cfield",
     }
 
     strct := structs.New(obj)
