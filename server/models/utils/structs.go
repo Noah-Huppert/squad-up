@@ -6,7 +6,7 @@ import (
     "strings"
 )
 
-var RecursionMaxDepth = 20
+var DefaultRecursionMaxDepth = 20
 
 // Converts a struct into a map with string keys and interface{} values.
 // Takes a structs.Struct as input, this type was chosen to indicate that this method is for use on structs.
@@ -59,12 +59,14 @@ var RecursionMaxDepth = 20
 //
 // Returns converted map and error
 func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]interface{}, error) {
+    // Check recursion max
     recursionCounter++
 
     if (recursionCounter > recursionMax) {
         return nil, errors.New("Recursed past level specified in recursionMax")
     }
 
+    // Result to fill later
     result := make(map[string]interface{}, 0)
 
     // Loop over fields
@@ -74,6 +76,15 @@ func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]i
         if field.IsExported() == false {// If not then skip over
             continue
         }
+
+        // Get field name
+		fieldName := FieldName(*field)
+
+		// Ignore field if FieldName returns empty string
+		// This means a JSON tag was added to the field designating it should be ignored when marshalling
+		if fieldName == "" {
+			continue
+		}
 
         // Check to see if field is embedded
         if field.IsEmbedded() == true {// If field is embedded
@@ -102,7 +113,6 @@ func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]i
                 // Attach embeddedMap onto main struct map
                 // Check if main struct has field with same
                 // If main struct does have field with name of embedded type throw error
-                fieldName := FieldName(*field)
                 if _, ok := s.FieldOk(fieldName); ok == true {
                     return nil, errors.New("[WTF] Main struct has seperate key with name of embedded type: \"" + field.Name() + "\"")
                 }
@@ -176,7 +186,7 @@ func FieldName (field structs.Field) string {
     return field.Name()
 }
 
-// ToMap proxy caller. Allows user not specify recursion max depth and use default RecursionMaxDepth instead.
+// ToMap proxy caller. Allows user not specify recursion max depth and use default DefaultRecursionMaxDepth instead.
 func ToMap (s *structs.Struct) (map[string]interface{}, error) {
-    return toMap(s, RecursionMaxDepth, 0)
+    return toMap(s, DefaultRecursionMaxDepth, 0)
 }
