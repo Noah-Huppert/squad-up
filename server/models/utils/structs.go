@@ -6,12 +6,12 @@ import (
     "strings"
 )
 
-var RecursionMaxDepth = 20
+var DefaultRecursionMaxDepth = 20
 
 // Converts a struct into a map with string keys and interface{} values.
 // Takes a structs.Struct as input, this type was chosen to indicate that this method is for use on structs.
 //
-// Merges embedded types fields into main struct to mimic the implied "inheritance".
+// Merges embedded type's fields into main struct to mimic the implied "inheritance".
 // If an embedded type is not a struct than it will be treated like a normal KV pair.
 //
 // If an embedded type and the main struct have colliding keys the problematic keys from the embedded type will be placed
@@ -55,10 +55,19 @@ var RecursionMaxDepth = 20
 //     If the main struct has a key with the same name as the name of an embedded type and a collided key needs to be
 //     merged an error will be thrown.
 //
+// Returns error if recursed past level specified by recursionMax
+//
 // Returns converted map and error
 func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]interface{}, error) {
-    result := make(map[string]interface{}, 0)
+    // Check recursion max
+    recursionCounter++
 
+    if (recursionCounter > recursionMax) {
+        return nil, errors.New("Recursed past level specified in recursionMax")
+    }
+
+    // Result to fill later
+    result := make(map[string]interface{}, 0)
 
     // Loop over fields
     fields := s.Fields()
@@ -67,6 +76,15 @@ func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]i
         if field.IsExported() == false {// If not then skip over
             continue
         }
+
+        // Get field name
+		fieldName := FieldName(*field)
+
+		// Ignore field if FieldName returns empty string
+		// This means a JSON tag was added to the field designating it should be ignored when marshalling
+		if fieldName == "" {
+			continue
+		}
 
         // Check to see if field is embedded
         if field.IsEmbedded() == true {// If field is embedded
@@ -95,12 +113,14 @@ func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]i
                 // Attach embeddedMap onto main struct map
                 // Check if main struct has field with same
                 // If main struct does have field with name of embedded type throw error
-                fieldName := FieldName(*field)
-                if _, ok := s.FieldOk(fieldName); ok == true {
-                    return nil, errors.New("[WTF] Main struct has seperate key with name of embedded type: \"" + field.Name() + "\"")
+                if _, ok := result[fieldName]; ok == true {
+                    return nil, errors.New("[WTF] Main struct has separate key with name of embedded type: \"" + field.Name() + "\"")
                 }
 
-                result[fieldName] = embeddedMap
+                // Set embedded values if they exist
+                if len(embeddedMap) > 0 {
+                    result[fieldName] = embeddedMap
+                }
             }
         } else {// If field isn't embedded, aka normal
             result[FieldName(*field)] = field.Value()
@@ -121,12 +141,16 @@ func FieldName (field structs.Field) string {
         return ""
     }
 
+    // Get JSON tag
     jsonTag := field.Tag("json")
-    jsonTagVals := strings.Split(jsonTag, ",")
 
     // If "json" tag exists
     if jsonTag != "" {
+        // Parse JSON tag
+        jsonTagVals := strings.Split(jsonTag, ",")
+
         // If "json" tag has the value of "-" return empty string
+        // Designates that field should not be marshaled
         if jsonTag == "-" {
             return ""
         }
@@ -169,7 +193,7 @@ func FieldName (field structs.Field) string {
     return field.Name()
 }
 
-// ToMap proxy caller. Allows user not specify recursion max depth and use default RecursionMaxDepth instead.
+// ToMap proxy caller. Allows user not specify recursion max depth and use default DefaultRecursionMaxDepth instead.
 func ToMap (s *structs.Struct) (map[string]interface{}, error) {
-    return toMap(s, RecursionMaxDepth, 0)
+    return toMap(s, DefaultRecursionMaxDepth, 0)
 }
