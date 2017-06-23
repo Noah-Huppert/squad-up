@@ -113,11 +113,14 @@ func toMap (s *structs.Struct, recursionMax, recursionCounter int) (map[string]i
                 // Attach embeddedMap onto main struct map
                 // Check if main struct has field with same
                 // If main struct does have field with name of embedded type throw error
-                if _, ok := s.FieldOk(fieldName); ok == true {
-                    return nil, errors.New("[WTF] Main struct has seperate key with name of embedded type: \"" + field.Name() + "\"")
+                if _, ok := result[fieldName]; ok == true {
+                    return nil, errors.New("[WTF] Main struct has separate key with name of embedded type: \"" + field.Name() + "\"")
                 }
 
-                result[fieldName] = embeddedMap
+                // Set embedded values if they exist
+                if len(embeddedMap) > 0 {
+                    result[fieldName] = embeddedMap
+                }
             }
         } else {// If field isn't embedded, aka normal
             result[FieldName(*field)] = field.Value()
@@ -138,12 +141,16 @@ func FieldName (field structs.Field) string {
         return ""
     }
 
+    // Get JSON tag
     jsonTag := field.Tag("json")
-    jsonTagVals := strings.Split(jsonTag, ",")
 
     // If "json" tag exists
     if jsonTag != "" {
+        // Parse JSON tag
+        jsonTagVals := strings.Split(jsonTag, ",")
+
         // If "json" tag has the value of "-" return empty string
+        // Designates that field should not be marshaled
         if jsonTag == "-" {
             return ""
         }

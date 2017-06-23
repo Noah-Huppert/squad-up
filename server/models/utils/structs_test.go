@@ -20,7 +20,7 @@ type CTest struct {
 }
 
 type DTest struct {
-    str string
+    Str string
 }
 
 // Struct for DoesNotMarshalUnexportedFields test
@@ -38,6 +38,28 @@ type JsonIgnoreTagTest struct {
     CField string
 }
 
+// Struct and types for DoesNotTouchEmbeddedNonStructTypes test
+type NonStructTestType string
+type EmbedsNonStruct struct {
+    NonStructTestType
+    AField string
+}
+
+// Structs for PutsEmbeddedDupFieldsInSubField test
+type ASameStructWithBSameStruct struct {
+    BSameStruct
+    AField string
+    BField string
+    CField string
+}
+
+type BSameStruct struct {
+    AField string
+    CField string
+    DField string
+}
+
+// Test toMap function doesn't call itself recursively more than the recursiveMax arg specified
 func TestStructs_toMap_ErrorWhenOverRecursionMax(t *testing.T) {
     a := assert.New(t)
 
@@ -46,7 +68,7 @@ func TestStructs_toMap_ErrorWhenOverRecursionMax(t *testing.T) {
         BTest{
             CTest{
                DTest{
-                    str: "str",
+                    Str: "Str",
                 },
             },
         },
@@ -61,12 +83,19 @@ func TestStructs_toMap_ErrorWhenOverRecursionMax(t *testing.T) {
     a.Contains(err.Error(), "Recursed past level specified in recursionMax")
 }
 
+// Test toMap function works ok when it calls itself recursively less than the recursiveMax arg specified
 func TestStructs_toMap_OkWhenUnderRecursionMax(t *testing.T) {
     a := assert.New(t)
 
     // Make object with depth of 0
-    obj := DTest{
-        str: "str",
+    obj := ATest{
+        BTest{
+            CTest{
+               DTest{
+                    Str: "Str",
+                },
+            },
+        },
     }
 
     strct := structs.New(obj)
@@ -78,6 +107,7 @@ func TestStructs_toMap_OkWhenUnderRecursionMax(t *testing.T) {
     a.Nil(err)
 }
 
+// Test toMap function does not marshall fields that are not exported
 func TestStructs_toMap_DoesNotMarshalUnexportedFields(t *testing.T) {
     a := assert.New(t)
 
@@ -101,7 +131,7 @@ func TestStructs_toMap_DoesNotMarshalUnexportedFields(t *testing.T) {
     a.Nil(err)
 }
 
-// Tests that toMap does not marshal fields which have the "json:-" tag
+// Test that toMap does not marshal fields which have the "json:-" tag
 // As this designates that the field should not be marshaled
 func TestStructs_toMap_DoesNotMarshalIfJsonIgnoreTagPresent(t *testing.T) {
     a := assert.New(t)
@@ -121,6 +151,90 @@ func TestStructs_toMap_DoesNotMarshalIfJsonIgnoreTagPresent(t *testing.T) {
     a.Equal(map[string]interface{}{
         "AField": "afield",
         "CField": "cfield",
+    }, res)
+    a.Nil(err)
+}
+
+// Test that toMap doesn't do anything with non struct type embedded fields
+func TestStructs_toMap_DoesNotTouchEmbeddedNonStructTypes(t *testing.T) {
+    a := assert.New(t)
+
+    // Create struct
+    var tt NonStructTestType = "tt"
+    obj := EmbedsNonStruct{
+        NonStructTestType: tt,
+        AField: "afield",
+    }
+
+    strct := structs.New(obj)
+
+    // Test
+    res, err := toMap(strct, DefaultRecursionMaxDepth, 0)
+
+    a.Equal(map[string]interface{}{
+        "AField": "afield",
+    }, res)
+    a.Nil(err)
+}
+
+// Test that toMap puts fields from an embedded struct in the main struct
+func TestStructs_toMap_PutsEmbeddedFieldsInMainStruct(t *testing.T) {
+    a := assert.New(t)
+
+    // Make struct
+    obj := ATest{
+        BTest{
+            CTest{
+                DTest{
+                    Str: "Str",
+                },
+            },
+        },
+    }
+
+    strct := structs.New(obj)
+
+    // Test
+    res, err := toMap(strct, DefaultRecursionMaxDepth, 0)
+
+    a.Equal(map[string]interface{}{
+        "Str": "Str",
+    }, res)
+    a.Nil(err)
+}
+
+
+// Test that toMap puts fields that both the main struct and embedded struct have in a field with the embedded struct's
+// name
+func TestStructs_toMap_PutsEmbeddedDupFieldsInSubField(t *testing.T) {
+    a := assert.New(t)
+
+    // Create struct
+    obj := ASameStructWithBSameStruct{
+        BSameStruct: BSameStruct{
+            AField: "afieldb",
+            CField: "cfieldb",
+            DField: "dfieldb",
+        },
+        AField: "afielda",
+        BField: "bfielda",
+        CField: "cfielda",
+    }
+
+    strct := structs.New(obj)
+
+    // Test
+    res, err := toMap(strct, DefaultRecursionMaxDepth, 0)
+
+    a.Equal(map[string]interface{}{
+        "BSameStruct": map[string]interface{}{
+            "AField": "afieldb",
+            "CField": "cfieldb",
+        },
+        "DField": "dfieldb",
+        "AField": "afielda",
+        "BField": "bfielda",
+        "CField": "cfielda",
     }, res)
     a.Nil(err)
 }
